@@ -39,8 +39,7 @@ authors="Lych" #optional
 #displayTest="MATCH_VERSION" # MATCH_VERSION is the default if nothing is specified (#optional)
 
 # The description text for the mod (multi line!) (#mandatory)
-description='''The mod provides a lot of extra summoning operations.
-They can be used to summon a lot of mobs in a short time.'''
+description='''The mod provides a new summoning area system which is used to summon a lot of mobs in a specific area.'''
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
 [[dependencies.summoningex]] #optional
     # the modid of the dependency
