@@ -48,7 +48,7 @@ public final class Area {
         float hue = 0.05f * random.nextInt(20);
 //      Two types of saturation - low(0.5) and high(0.8)
         float saturation = random.nextBoolean() ? 0.5f : 0.8f;
-//      Randomly selects hue from 0.5 to 0.1 (step=0.125)
+//      Randomly selects hue from 0.5 to 1 (step=0.125)
         float brightness = 0.5f + 0.125f * random.nextInt(5);
         return Color.HSBtoRGB(hue, saturation, brightness);
     }
