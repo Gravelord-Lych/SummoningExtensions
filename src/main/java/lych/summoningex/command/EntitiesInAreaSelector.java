@@ -17,6 +17,7 @@ import net.minecraft.commands.arguments.selector.EntitySelectorParser;
 import net.minecraft.commands.arguments.selector.options.EntitySelectorOptions;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.command.EntitySelectorManager;
 import net.minecraftforge.common.command.IEntitySelectorType;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -47,9 +48,19 @@ public enum EntitiesInAreaSelector implements IEntitySelectorType {
 
             int start = reader.getCursor();
 
-            ClientLevel level = Minecraft.getInstance().level;
+            Level level;
+            try {
+                level = Minecraft.getInstance().level;
+            } catch (RuntimeException e) {
+                if (e.getMessage() != null && e.getMessage().contains("dist")) {
+                    level = null;
+                } else {
+                    throw e;
+                }
+            }
             if (level != null) {
-                parser.setSuggestions((builder, consumer) -> AreaNameArgument.suggestLocalAreas(builder, level));
+                Level finalLevel = level;
+                parser.setSuggestions((builder, consumer) -> AreaNameArgument.suggestLocalAreas(builder, (ClientLevel) finalLevel));
 
                 if (reader.canRead() && reader.peek() != '#') {
                     String name = reader.readString();
