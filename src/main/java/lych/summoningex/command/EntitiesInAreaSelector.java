@@ -5,7 +5,6 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-import lych.summoningex.CommonConfig;
 import lych.summoningex.SummoningExtensions;
 import lych.summoningex.client.ClientAreaManager;
 import lych.summoningex.command.argument.AreaNameArgument;
@@ -17,8 +16,6 @@ import net.minecraft.commands.arguments.selector.EntitySelectorParser;
 import net.minecraft.commands.arguments.selector.options.EntitySelectorOptions;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.Level;
-import net.minecraftforge.common.command.EntitySelectorManager;
 import net.minecraftforge.common.command.IEntitySelectorType;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -27,6 +24,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
+@Deprecated
 @Mod.EventBusSubscriber(modid = SummoningExtensions.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public enum EntitiesInAreaSelector implements IEntitySelectorType {
     INSTANCE;
@@ -35,7 +33,8 @@ public enum EntitiesInAreaSelector implements IEntitySelectorType {
 
     @SubscribeEvent
     public static void onCommonSetup(FMLCommonSetupEvent event) {
-        EntitySelectorManager.register(CommonConfig.SELECTOR_TOKEN.get(), EntitiesInAreaSelector.INSTANCE);
+//        THere are some problems associated with @b
+//        EntitySelectorManager.register(CommonConfig.SELECTOR_TOKEN.get(), EntitiesInAreaSelector.INSTANCE);
     }
 
     @Override
@@ -48,19 +47,9 @@ public enum EntitiesInAreaSelector implements IEntitySelectorType {
 
             int start = reader.getCursor();
 
-            Level level;
-            try {
-                level = Minecraft.getInstance().level;
-            } catch (RuntimeException e) {
-                if (e.getMessage() != null && e.getMessage().contains("dist")) {
-                    level = null;
-                } else {
-                    throw e;
-                }
-            }
+            ClientLevel level = Minecraft.getInstance().level;
             if (level != null) {
-                Level finalLevel = level;
-                parser.setSuggestions((builder, consumer) -> AreaNameArgument.suggestLocalAreas(builder, (ClientLevel) finalLevel));
+                parser.setSuggestions((builder, consumer) -> AreaNameArgument.suggestLocalAreas(builder, level));
 
                 if (reader.canRead() && reader.peek() != '#') {
                     String name = reader.readString();
